@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI 生成项目通用提示词规范</title>
+  <style>
+    :root {
+      --bg: #0b0c0c;
+      --ink: #f2eee3;
+      --muted: #bbb29f;
+      --dim: #81796a;
+      --panel: #141615;
+      --panel-2: #191b1a;
+      --line: #3b3528;
+      --line-strong: #9a7738;
+      --gold: #d4a850;
+      --gold-soft: #efd28a;
+      --red: #d66b57;
+      --green: #89c58d;
+      --blue: #86add0;
+      --shadow: rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", system-ui, sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+      overflow-wrap: break-word;
+      overflow-x: hidden;
+      background:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px),
+        radial-gradient(circle at 18% 0%, rgba(212,168,80,0.11), transparent 34%),
+        radial-gradient(circle at 80% 20%, rgba(134,173,208,0.07), transparent 32%),
+        var(--bg);
+      background-size: 80px 80px, 80px 80px, auto, auto, auto;
+    }
+
+    a { color: var(--gold-soft); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .page {
+      width: min(1440px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 56px 0 78px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(340px, 0.75fr);
+      gap: 24px;
+      min-height: 520px;
+    }
+
+    .hero-main,
+    .hero-side,
+    .card,
+    .wide,
+    .matrix,
+    .table-wrap,
+    .quote {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.012));
+      box-shadow: 0 22px 58px var(--shadow);
+      min-width: 0;
+    }
+
+    .hero-main {
+      padding: 46px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 170px;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.7));
+      pointer-events: none;
+    }
+
+    .bar {
+      width: 270px;
+      height: 6px;
+      background: var(--gold);
+      margin-bottom: 30px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1, h2, h3, p, b, span, li, td, th { overflow-wrap: anywhere; }
+
+    h1 {
+      max-width: 980px;
+      font-size: clamp(42px, 5.2vw, 82px);
+      line-height: 1.04;
+    }
+
+    .subtitle {
+      margin-top: 24px;
+      max-width: 920px;
+      color: var(--muted);
+      font-size: 22px;
+    }
+
+    .formula {
+      position: relative;
+      z-index: 1;
+      margin-top: 44px;
+      padding: 22px;
+      border: 1px solid var(--line-strong);
+      background: rgba(8,9,8,0.72);
+      color: var(--gold-soft);
+      font-size: 22px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .hero-side {
+      padding: 28px;
+      display: grid;
+      gap: 20px;
+    }
+
+    .side-block {
+      border-left: 3px solid var(--gold);
+      padding-left: 16px;
+    }
+
+    .side-block b {
+      display: block;
+      color: var(--gold-soft);
+      margin-bottom: 7px;
+      font-size: 19px;
+    }
+
+    .side-block span {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    section { margin-top: 56px; }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 28px;
+      align-items: end;
+      padding-bottom: 18px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head h2 {
+      font-size: 34px;
+      line-height: 1.2;
+    }
+
+    .section-head p {
+      max-width: 700px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card, .wide {
+      padding: 24px;
+    }
+
+    .card h3, .wide h3 {
+      color: var(--gold-soft);
+      font-size: 23px;
+      margin-bottom: 12px;
+    }
+
+    .card p, .wide p, li {
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    .quote {
+      padding: 24px;
+      color: var(--gold-soft);
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: 0.85fr 1.05fr 1.1fr;
+      overflow: hidden;
+    }
+
+    .matrix > div {
+      min-height: 116px;
+      padding: 18px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .matrix > div:nth-child(3n) { border-right: 0; }
+    .matrix .head {
+      min-height: auto;
+      color: var(--gold-soft);
+      font-weight: 700;
+      background: rgba(212,168,80,0.08);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 9px;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: rgba(255,255,255,0.025);
+      font-size: 13px;
+    }
+
+    .red { color: var(--red); font-weight: 700; }
+    .green { color: var(--green); font-weight: 700; }
+    .blue { color: var(--blue); font-weight: 700; }
+
+    .code {
+      margin-top: 14px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: #070807;
+      color: var(--ink);
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: "Cascadia Mono", Consolas, "Microsoft YaHei", monospace;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 16px;
+      text-align: left;
+      vertical-align: top;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: var(--gold-soft);
+      background: rgba(212,168,80,0.08);
+      font-size: 17px;
+    }
+
+    td {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    th:last-child, td:last-child { border-right: 0; }
+    tr:last-child td { border-bottom: 0; }
+
+    .process {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .step {
+      position: relative;
+      min-height: 158px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      min-width: 0;
+    }
+
+    .step::after {
+      content: "→";
+      position: absolute;
+      right: -18px;
+      top: 56px;
+      color: var(--gold);
+      font-size: 23px;
+    }
+
+    .step:last-child::after { display: none; }
+    .step b { display: block; color: var(--gold-soft); margin-bottom: 8px; }
+    .step span { color: var(--muted); font-size: 14px; }
+
+    .footer {
+      margin-top: 58px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      color: var(--dim);
+      font-size: 14px;
+    }
+
+    .mobile-list { display: none; }
+
+    @media (max-width: 1100px) {
+      .hero, .grid, .grid.two, .grid.four, .process { grid-template-columns: 1fr; }
+      .matrix { grid-template-columns: 1fr; }
+      .matrix > div { border-right: 0; }
+      .step::after { display: none; }
+      .section-head { display: block; }
+      .section-head p { margin-top: 10px; }
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        width: min(calc(100% - 28px), 1440px);
+        padding: 28px 0 52px;
+      }
+
+      .hero {
+        gap: 14px;
+        min-height: 0;
+      }
+
+      .hero-main,
+      .hero-side,
+      .card,
+      .wide,
+      .quote {
+        padding: 18px;
+      }
+
+      .bar {
+        width: 150px;
+        height: 5px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        font-size: clamp(30px, 9.2vw, 38px);
+        line-height: 1.12;
+        word-break: break-all;
+      }
+
+      .subtitle {
+        margin-top: 16px;
+        font-size: 16px;
+      }
+
+      .formula {
+        margin-top: 24px;
+        padding: 16px;
+        font-size: 15px;
+        line-height: 1.7;
+        word-break: break-all;
+      }
+
+      section {
+        margin-top: 38px;
+      }
+
+      .section-head {
+        padding-bottom: 12px;
+        margin-bottom: 14px;
+      }
+
+      .section-head h2 {
+        font-size: 26px;
+      }
+
+      .section-head p,
+      .card p,
+      .wide p,
+      li {
+        font-size: 15px;
+      }
+
+      .card h3,
+      .wide h3 {
+        font-size: 20px;
+      }
+
+      .quote {
+        font-size: 19px;
+        text-align: left;
+      }
+
+      .side-block span,
+      .section-head p,
+      .quote,
+      .card p,
+      .wide p,
+      li {
+        line-height: 1.75;
+      }
+
+      .matrix > div {
+        min-height: 0;
+        padding: 15px;
+      }
+
+      .matrix .head {
+        display: none;
+      }
+
+      .matrix > div:not(.head) {
+        position: relative;
+        padding-top: 38px;
+      }
+
+      .matrix > div:not(.head)::before {
+        position: absolute;
+        left: 15px;
+        top: 12px;
+        color: var(--gold-soft);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .matrix > div:nth-child(3n+1)::before { content: "抽象说法"; }
+      .matrix > div:nth-child(3n+2)::before { content: "常见风险"; }
+      .matrix > div:nth-child(3n)::before { content: "可执行改写"; }
+
+      .table-wrap {
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        overflow: visible;
+      }
+
+      .desktop-table {
+        display: none;
+      }
+
+      .mobile-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .mobile-item {
+        padding: 16px;
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.012));
+      }
+
+      .mobile-item b {
+        display: block;
+        color: var(--gold-soft);
+        margin-bottom: 8px;
+        font-size: 18px;
+      }
+
+      .mobile-item p {
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .mobile-item p + p {
+        margin-top: 8px;
+      }
+
+      .code {
+        padding: 14px;
+        font-size: 13px;
+        max-height: 520px;
+      }
+
+      .footer {
+        margin-top: 38px;
+      }
+    }
+
+    @media (min-width: 761px) and (max-width: 1100px) {
+      .page {
+        width: min(calc(100% - 40px), 1440px);
+      }
+
+      .hero-main,
+      .hero-side {
+        padding: 32px;
+      }
+
+      h1 {
+        font-size: clamp(46px, 7vw, 68px);
+      }
+    }
+
+    @media print {
+      body { background: white; color: #111; }
+      .hero-main, .hero-side, .card, .wide, .matrix, .table-wrap, .quote, .step { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-main">
+        <div class="bar"></div>
+        <h1>AI 生成项目通用提示词规范</h1>
+        <p class="subtitle">一份不绑定具体行业、模型或项目的生产规范。目标是把 AI 生成从“凭感觉写提示词”变成“有输入、有结构、有约束、有验收”的可复用流程。</p>
+        <div class="formula">任务目标 + 输入资产 + 内容主体 + 结构关系 + 风格方向 + 约束条件 + 验收标准</div>
+      </div>
+      <aside class="hero-side">
+        <div class="side-block"><b>提示词不是灵感描述</b><span>它是生产指令，需要清楚定义输入、输出、边界和失败条件。</span></div>
+        <div class="side-block"><b>抽象词不能承担控制任务</b><span>“高级、专业、震撼、真实”必须转译成结构、光线、节奏、格式和限制。</span></div>
+        <div class="side-block"><b>负向约束必须分级</b><span>最高风险误解放在前面，避免把禁止项写成噪声列表。</span></div>
+        <div class="side-block"><b>没有验收标准就没有完成</b><span>如果输出不能进入下一环节，它只是样稿，不是可交付结果。</span></div>
+      </aside>
+    </header>
+
+    <section>
+      <div class="section-head">
+        <h2>一、总原则</h2>
+        <p>任何 AI 生成任务，都必须先回答“要什么、依据什么、不能错什么、怎么验收”。</p>
+      </div>
+      <div class="quote">抽象词负责审美方向，控制词负责生成结果。</div>
+      <div class="grid" style="margin-top:18px;">
+        <div class="card">
+          <h3>要生成什么</h3>
+          <p>明确最终产出类型、使用场景、交付对象和下一环节，而不是只写“帮我做一个高级版本”。</p>
+        </div>
+        <div class="card">
+          <h3>依据是什么</h3>
+          <p>说明参考图、文案、品牌规范、尺寸、平台、脚本、数据或已有素材。没有输入依据，模型只能猜。</p>
+        </div>
+        <div class="card">
+          <h3>什么算失败</h3>
+          <p>提前定义错误内容、错格式、错风格、核心元素丢失、无法复用等失败条件。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>二、提示词七层结构</h2>
+        <p>这七层是通用骨架。不同任务可以增减字段，但不能丢掉目标、输入、约束和验收。</p>
+      </div>
+      <div class="grid four">
+        <div class="card"><h3>1. 任务目标</h3><p>最终要产出什么，用于什么场景，给谁看，进入哪个流程。</p></div>
+        <div class="card"><h3>2. 输入资产</h3><p>参考图、脚本、品牌规范、尺寸、平台、素材文件、历史版本。</p></div>
+        <div class="card"><h3>3. 内容主体</h3><p>画面、文本、视频、音频或设计中的核心对象与必要信息。</p></div>
+        <div class="card"><h3>4. 结构关系</h3><p>位置、层级、节奏、版式、空间、逻辑关系和信息优先级。</p></div>
+        <div class="card"><h3>5. 风格方向</h3><p>美术、语言、材质、语气、镜头、光影、节奏、密度。</p></div>
+        <div class="card"><h3>6. 约束条件</h3><p>不能变的元素、不能出现的内容、平台限制、品牌限制。</p></div>
+        <div class="card"><h3>7. 验收标准</h3><p>什么结果可用，什么必须重做，是否能进入下一环节。</p></div>
+        <div class="card"><h3>底线</h3><p>没有结构、约束和验收标准的提示词，不是生产级提示词。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>三、抽象词翻译表</h2>
+        <p>抽象词可以保留在内部判断里，但给模型时必须翻译成可观察、可执行、可验收的语言。</p>
+      </div>
+      <div class="matrix">
+        <div class="head">抽象说法</div>
+        <div class="head">常见风险</div>
+        <div class="head">可执行改写</div>
+
+        <div>高级</div>
+        <div>模型可能做成满屏金光、过曝、奢侈品模板。</div>
+        <div><span class="green">留白充足、色彩克制、细节有主次、无廉价闪烁、材质统一。</span></div>
+
+        <div>专业</div>
+        <div>容易只是语气变正式，但结构仍混乱。</div>
+        <div><span class="green">信息层级清楚、格式统一、术语准确、结论可执行。</span></div>
+
+        <div>真实</div>
+        <div>可能偏向摄影复刻，或把艺术表达拉回现实素材。</div>
+        <div><span class="green">逻辑自洽、空间稳定、光影有因果、材质行为一致。</span></div>
+
+        <div>电影感</div>
+        <div>可能只加黑边、强对比和随机景深。</div>
+        <div><span class="green">明确景别、镜头运动、主光方向、节奏变化和情绪推进。</span></div>
+
+        <div>震撼</div>
+        <div>容易变成粒子爆炸、镜头乱飞、信息过载。</div>
+        <div><span class="green">大构图明确、节奏有积累、高潮有释放，关键主体不丢失。</span></div>
+
+        <div>有质感</div>
+        <div>模型可能堆纹理，导致画面或设计变脏。</div>
+        <div><span class="green">指定材质、粗糙度、光泽、边缘、阴影、触感和细节密度。</span></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>四、负向约束分级</h2>
+        <p>不要把“不想要”写成一长串。越关键、越容易误解、越会毁交付的内容，越要靠前。</p>
+      </div>
+      <div class="grid">
+        <div class="card" style="border-color: rgba(214,107,87,0.75);">
+          <h3><span class="red">A 级</span>：绝对禁止</h3>
+          <p>一旦出现就导致交付失败。</p>
+          <ul>
+            <li>错误内容、错品牌、错人物、错语言。</li>
+            <li>错尺寸、错格式、核心元素丢失。</li>
+            <li>违反版权、安全、客户或平台边界。</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: rgba(212,168,80,0.75);">
+          <h3><span class="blue">B 级</span>：强烈避免</h3>
+          <p>会明显降低质量或增加返工。</p>
+          <ul>
+            <li>画面脏乱、文字错误、结构漂移。</li>
+            <li>风格不统一、细节过载、信息层级混乱。</li>
+            <li>输出无法进入下一环节。</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: rgba(134,173,208,0.65);">
+          <h3><span class="green">C 级</span>：风格偏差</h3>
+          <p>用于防止模型模板化和审美跑偏。</p>
+          <ul>
+            <li>过度装饰、网感太重、AI 味太重。</li>
+            <li>廉价闪烁、套模板、无意义细节。</li>
+            <li>语气过满、视觉过密、节奏失控。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>五、不同任务的重点</h2>
+        <p>通用规范不是一套话术套所有任务。不同媒介的控制变量不同。</p>
+      </div>
+      <div class="table-wrap">
+        <table class="desktop-table">
+          <thead>
+            <tr>
+              <th>任务类型</th>
+              <th>提示词重点</th>
+              <th>常见失败</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>图像生成</td>
+              <td>主体、构图、材质、光线、色彩、风格边界、禁止项。</td>
+              <td>好看但无结构、主体变形、文字乱码、风格跑偏。</td>
+            </tr>
+            <tr>
+              <td>视频生成</td>
+              <td>首帧、尾帧、变化过程、镜头运动、稳定区域、可变区域、节奏。</td>
+              <td>跳切、变形、镜头乱飞、只闪烁不推进。</td>
+            </tr>
+            <tr>
+              <td>文案生成</td>
+              <td>目标读者、语气、结构、长度、禁用词、信息优先级、转化目标。</td>
+              <td>空泛、套话、缺少事实依据、语气不符合对象。</td>
+            </tr>
+            <tr>
+              <td>设计生成</td>
+              <td>版式层级、组件关系、视觉密度、状态、品牌一致性、响应式要求。</td>
+              <td>只像概念图，不能落地；组件状态缺失；移动端崩坏。</td>
+            </tr>
+            <tr>
+              <td>故事板生成</td>
+              <td>主视觉、分镜编号、时间码、镜头、动作、画面说明、风格板、色卡。</td>
+              <td>只有漂亮拼贴，没有镜头逻辑和生产说明。</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="mobile-list" aria-label="不同任务的重点">
+          <div class="mobile-item">
+            <b>图像生成</b>
+            <p>重点：主体、构图、材质、光线、色彩、风格边界、禁止项。</p>
+            <p>常见失败：好看但无结构、主体变形、文字乱码、风格跑偏。</p>
+          </div>
+          <div class="mobile-item">
+            <b>视频生成</b>
+            <p>重点：首帧、尾帧、变化过程、镜头运动、稳定区域、可变区域、节奏。</p>
+            <p>常见失败：跳切、变形、镜头乱飞、只闪烁不推进。</p>
+          </div>
+          <div class="mobile-item">
+            <b>文案生成</b>
+            <p>重点：目标读者、语气、结构、长度、禁用词、信息优先级、转化目标。</p>
+            <p>常见失败：空泛、套话、缺少事实依据、语气不符合对象。</p>
+          </div>
+          <div class="mobile-item">
+            <b>设计生成</b>
+            <p>重点：版式层级、组件关系、视觉密度、状态、品牌一致性、响应式要求。</p>
+            <p>常见失败：只像概念图，不能落地；组件状态缺失；移动端崩坏。</p>
+          </div>
+          <div class="mobile-item">
+            <b>故事板生成</b>
+            <p>重点：主视觉、分镜编号、时间码、镜头、动作、画面说明、风格板、色卡。</p>
+            <p>常见失败：只有漂亮拼贴，没有镜头逻辑和生产说明。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>六、通用生产流程</h2>
+        <p>提示词只是中间环节。真正的项目规范必须覆盖需求、输入、生成、复审、迭代和归档。</p>
+      </div>
+      <div class="process">
+        <div class="step"><b>1. 需求澄清</b><span>确认产出、受众、用途、尺寸、平台、截止时间。</span></div>
+        <div class="step"><b>2. 输入整理</b><span>收集参考、素材、脚本、品牌规范、历史版本。</span></div>
+        <div class="step"><b>3. 提示词编写</b><span>按七层结构写目标、主体、结构、风格、约束。</span></div>
+        <div class="step"><b>4. 生成与记录</b><span>记录模型、参数、版本、输入资产和输出结果。</span></div>
+        <div class="step"><b>5. 复审迭代</b><span>按验收标准判断问题，不凭“感觉不错”过关。</span></div>
+        <div class="step"><b>6. 归档交付</b><span>保留最终文件、提示词、版本说明和复跑建议。</span></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>七、标准提示词模板</h2>
+        <p>这份模板适合复制后改写。不要机械填空，重点是每一项都能被检查。</p>
+      </div>
+      <div class="wide">
+        <h3>通用模板</h3>
+        <div class="code">任务目标：
+[我要生成什么，用于什么场景，交付给谁]
+
+输入依据：
+[参考图 / 脚本 / 品牌规范 / 尺寸 / 平台 / 历史版本]
+
+核心内容：
+[必须出现的主体、信息、动作或结构]
+
+结构要求：
+[位置关系、层级、节奏、构图、版式、逻辑顺序]
+
+风格要求：
+[色彩、材质、光影、语气、镜头、美术方向]
+
+稳定元素：
+[绝对不能改变的内容]
+
+可变元素：
+[允许模型发挥的范围]
+
+负向约束：
+A 级禁止：[一旦出现就失败]
+B 级避免：[明显降低质量]
+C 级偏差：[风格和审美跑偏]
+
+输出格式：
+[尺寸、比例、文件类型、语言、表格、JSON、分镜等]
+
+验收标准：
+[什么算合格，什么必须重做，是否能进入下一环节]</div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>八、验收标准</h2>
+        <p>验收必须比审美评价更硬。不能进入下一环节的输出，不算完成。</p>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>目标验收</h3>
+          <ul>
+            <li>是否符合任务目标？</li>
+            <li>是否使用了正确输入资产？</li>
+            <li>是否符合尺寸、格式和平台要求？</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>质量验收</h3>
+          <ul>
+            <li>是否保持关键元素一致？</li>
+            <li>是否有清晰主次和结构？</li>
+            <li>是否存在错字、错位、变形、脏乱？</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>流程验收</h3>
+          <ul>
+            <li>是否能被下一环节继续使用？</li>
+            <li>是否记录了提示词和版本？</li>
+            <li>是否需要人工修图、剪辑、排版或复跑？</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>九、公开查阅方式</h2>
+        <p>本页是单文件静态 HTML，公开查阅不需要后端。上线时建议把文件命名为 index.html，并把它放在待发布文件夹根目录。</p>
+      </div>
+      <div class="grid four">
+        <div class="card">
+          <h3>GitHub Pages</h3>
+          <p>适合长期维护、版本管理和公开资料库。官方文档说明它可以把 GitHub 仓库发布成网站。<br><a href="https://docs.github.com/en/pages/quickstart" target="_blank" rel="noreferrer">官方 Quickstart</a></p>
+          <div class="pill-row"><span class="pill">免费入门</span><span class="pill">版本管理</span><span class="pill">适合知识库</span></div>
+        </div>
+        <div class="card">
+          <h3>Cloudflare Pages</h3>
+          <p>适合静态页面快速发布。官方文档支持连接 Git、直接上传预构建资源或使用命令行。<br><a href="https://developers.cloudflare.com/pages/get-started/direct-upload/" target="_blank" rel="noreferrer">官方 Direct Upload</a></p>
+          <div class="pill-row"><span class="pill">速度快</span><span class="pill">直接上传</span><span class="pill">展示友好</span></div>
+        </div>
+        <div class="card">
+          <h3>Netlify</h3>
+          <p>适合快速部署静态页面，也适合后续连接 Git 做自动部署；Netlify Drop 支持拖拽包含 HTML 文件的文件夹。<br><a href="https://docs.netlify.com/start/get-started-with-drop/" target="_blank" rel="noreferrer">官方 Netlify Drop</a></p>
+          <div class="pill-row"><span class="pill">上手快</span><span class="pill">静态托管</span><span class="pill">适合分享</span></div>
+        </div>
+        <div class="card">
+          <h3>Vercel</h3>
+          <p>适合已经有前端工程协作的团队。官方文档说明静态 HTML/CSS/JS 网站不需要构建步骤。<br><a href="https://vercel.com/docs/builds" target="_blank" rel="noreferrer">官方 Builds 文档</a></p>
+          <div class="pill-row"><span class="pill">工程化</span><span class="pill">团队协作</span><span class="pill">预览部署</span></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>版本：v0.2。定位：通用项目规范，不包含任何具体项目案例。用途：AI 图像、视频、文案、设计、故事板等生成任务的提示词编写、复审和验收。</p>
+    </footer>
+  </main>
+</body>
+</html>
